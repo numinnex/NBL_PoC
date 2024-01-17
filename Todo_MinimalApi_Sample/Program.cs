@@ -1,12 +1,23 @@
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Todo_MinimalApi_Sample.Persistance;
 using Todo_MinimalApi_Sample.Todos;
 using Todo_MinimalApi_Sample.Version;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContextPool<TodoDbContext>(options =>
+// Tenant setup
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITenant>(sp =>
+{
+    var tenantIdString = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Request.Headers["TenantId"];
+
+    return tenantIdString != StringValues.Empty && int.TryParse(tenantIdString, out var tenantId)
+        ? new Tenant(tenantId)
+        : null;
+});
+builder.Services.AddPooledDbContextFactory<TodoDbContext>(options =>
 {
 	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -37,6 +48,5 @@ if (app.Environment.IsDevelopment())
 
 app.MapTodos();
 app.UseHttpsRedirection();
-
 
 app.Run();

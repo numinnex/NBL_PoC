@@ -7,7 +7,7 @@ public static class EndpointBuilder
 	{
 		return routes.MapMethods(
 			T.Pattern,
-			new[] { T.Method.ToString() },
+			[T.Method.ToString()],
 			T.Handler
 		).HasApiVersion(T.EndpointVersion);
 	} 

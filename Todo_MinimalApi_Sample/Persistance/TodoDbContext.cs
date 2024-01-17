@@ -6,6 +6,7 @@ namespace Todo_MinimalApi_Sample.Persistance;
 
 public sealed class TodoDbContext : DbContext
 {
+	public int TenantId { get; set; }
 	public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options)
 	{
 		
