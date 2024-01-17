@@ -6,7 +6,7 @@ using Todo_MinimalApi_Sample.Version;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<TodoDbContext>(options =>
+builder.Services.AddDbContextPool<TodoDbContext>(options =>
 {
 	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
