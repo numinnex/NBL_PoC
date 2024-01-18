@@ -1,9 +1,9 @@
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
-using NBL_PoC.Persistance;
-using NBL_PoC.Tenant;
-using NBL_PoC.Todos;
-using NBL_PoC.Version;
+using NBL_PoC_Api.Tenant;
+using NBL_PoC_Api.Persistance;
+using NBL_PoC_Api.Todos;
+using NBL_PoC_Api.Version;
 
 var builder = WebApplication.CreateBuilder(args);
 
