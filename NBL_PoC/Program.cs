@@ -36,6 +36,7 @@ builder.Services.AddApiVersioning(options =>
 	options.ApiVersionReader = new HeaderApiVersionReader("api-version");
 });
 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -54,7 +55,6 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.MapTodos();
 app.UseHttpsRedirection();
-
+app.MapControllers();
 app.Run();
