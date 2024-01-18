@@ -34,7 +34,6 @@ public sealed class GetTodos : IEndpoint
 
 	public static Delegate Handler => async ([FromServices] TodoDbContext ctx, CancellationToken token) =>
 	{
-		Console.WriteLine($"DB CONTEXT HERERERE {ctx.Todos}");
 		return await ctx.Todos.Select(t => t.AsTodoDto()).AsNoTracking().ToListAsync(token);
 	};
 }
@@ -48,7 +47,7 @@ public sealed class GetTodoById : IEndpoint
 	public static Delegate Handler =>
 		async Task<Results<Ok<TodoDto>, NotFound>> ([FromServices] TodoDbContext ctx, int id, CancellationToken token) =>
 	{
-		return await ctx.Todos.FindAsync(new object[] { id }, token) switch
+		return await ctx.Todos.FindAsync([id], token) switch
 		{
 			Todo todo => TypedResults.Ok(todo.AsTodoDto()),
 			_ => TypedResults.NotFound()

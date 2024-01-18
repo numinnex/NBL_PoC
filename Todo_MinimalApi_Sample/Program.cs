@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Todo_MinimalApi_Sample.Persistance;
+using Todo_MinimalApi_Sample.Tenant;
 using Todo_MinimalApi_Sample.Todos;
 using Todo_MinimalApi_Sample.Version;
 
@@ -12,15 +13,23 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenant>(sp =>
 {
     var tenantIdString = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Request.Headers["TenantId"];
-
     return tenantIdString != StringValues.Empty && int.TryParse(tenantIdString, out var tenantId)
-        ? new Tenant(tenantId)
+        ? new TenantData(tenantId)
         : null;
 });
+builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddDbContext<TenantsDbContext>(options =>
+{
+	options.UseNpgsql(builder.Configuration.GetConnectionString("TenantsConnectionString"));
+});
+
 builder.Services.AddPooledDbContextFactory<TodoDbContext>(options =>
 {
 	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddScoped<TodoDbContextScopedFactory>();
+builder.Services.AddScoped(async sp 
+	=> await sp.GetRequiredService<TodoDbContextScopedFactory>().CreateDbContextAsync());
 builder.Services.AddApiVersioning(options =>
 {
 	options.DefaultApiVersion = ApiVersioning.V1;

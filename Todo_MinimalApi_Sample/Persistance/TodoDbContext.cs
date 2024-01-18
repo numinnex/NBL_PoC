@@ -6,14 +6,22 @@ namespace Todo_MinimalApi_Sample.Persistance;
 
 public sealed class TodoDbContext : DbContext
 {
-	public int TenantId { get; set; }
+	public string ConnectionString { get; set; }
 	public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options)
 	{
 		
 	}	
 	public DbSet<Todo> Todos { get; set; }
-	
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+		if(!optionsBuilder.IsConfigured)
+		{
+			optionsBuilder.UseNpgsql(ConnectionString);
+		}
+        base.OnConfiguring(optionsBuilder);
+    }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.ApplyConfiguration(new TodoTableConfiguration());
 		base.OnModelCreating(modelBuilder);
