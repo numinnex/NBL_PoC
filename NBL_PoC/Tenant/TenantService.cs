@@ -18,4 +18,8 @@ public class TenantService : ITenantService
 
         return tenantConnectionString ?? string.Empty;
     }
+    public async Task<int> CreateAsync() 
+    {
+
+    }
 }

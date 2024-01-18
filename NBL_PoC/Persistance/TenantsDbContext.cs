@@ -20,7 +20,7 @@ file sealed class TenantsTableConfiguration : IEntityTypeConfiguration<Tenant>
 {
     public void Configure(EntityTypeBuilder<Tenant> builder)
     {
-        builder.Property(x => x.ConnectionString).HasMaxLength(255).IsRequired();
+        builder.Property(x => x.ConnectionString).HasMaxLength(350).IsRequired();
         builder.Property(x => x.Name).HasMaxLength(150).IsRequired();
         builder.HasKey(x => x.Id);
     }
