@@ -3,27 +3,26 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Todo_MinimalApi_Sample.Migrations
+namespace Todo_MinimalApi_Sample.Migrations.TenantsDb
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Todos",
+                name: "Tenants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false)
+                    Name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    ConnectionString = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Todos", x => x.Id);
+                    table.PrimaryKey("PK_Tenants", x => x.Id);
                 });
         }
 
@@ -31,7 +30,7 @@ namespace Todo_MinimalApi_Sample.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Todos");
+                name: "Tenants");
         }
     }
 }

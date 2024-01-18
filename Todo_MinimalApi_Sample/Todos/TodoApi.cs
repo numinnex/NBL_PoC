@@ -16,7 +16,6 @@ internal static class TodoApi
 		group.WithApiVersionSet(ApiVersioning.Set);
 		group.WithTags("Todos");
 
-
 		group.MapEndpoint<GetTodos>().MapToApiVersion(ApiVersioning.V1);
 		group.MapEndpoint<GetTodoById>().MapToApiVersion(ApiVersioning.V1);
 		group.MapEndpoint<CreateTodo>().MapToApiVersion(ApiVersioning.V1);

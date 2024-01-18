@@ -1,6 +1,5 @@
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
 using Todo_MinimalApi_Sample.Persistance;
 using Todo_MinimalApi_Sample.Tenant;
 using Todo_MinimalApi_Sample.Todos;
