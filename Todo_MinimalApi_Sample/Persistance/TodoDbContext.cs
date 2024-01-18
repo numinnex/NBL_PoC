@@ -15,7 +15,7 @@ public sealed class TodoDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-		if(!optionsBuilder.IsConfigured)
+		if(!optionsBuilder.IsConfigured && ConnectionString != string.Empty)
 		{
 			optionsBuilder.UseNpgsql(ConnectionString);
 		}

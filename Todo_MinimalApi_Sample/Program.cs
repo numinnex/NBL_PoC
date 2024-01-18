@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenant>(sp =>
 {
-    var tenantIdString = sp.GetRequiredService<IHttpContextAccessor>().HttpContext!.Request.Headers["TenantId"];
-    return tenantIdString != StringValues.Empty && int.TryParse(tenantIdString, out var tenantId)
+    var tenantIdString = sp.GetRequiredService<IHttpContextAccessor>().HttpContext?.Request.Headers["TenantId"]; 
+    return !string.IsNullOrEmpty(tenantIdString) && int.TryParse(tenantIdString, out var tenantId)
         ? new TenantData(tenantId)
         : null;
 });
@@ -28,8 +28,8 @@ builder.Services.AddPooledDbContextFactory<TodoDbContext>(options =>
 	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<TodoDbContextScopedFactory>();
-builder.Services.AddScoped(async sp 
-	=> await sp.GetRequiredService<TodoDbContextScopedFactory>().CreateDbContextAsync());
+builder.Services.AddScoped(sp 
+	=> sp.GetRequiredService<TodoDbContextScopedFactory>().CreateDbContext());
 builder.Services.AddApiVersioning(options =>
 {
 	options.DefaultApiVersion = ApiVersioning.V1;

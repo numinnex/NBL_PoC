@@ -21,7 +21,7 @@ public class TodoDbContextScopedFactory : IDbContextFactory<TodoDbContext>
 
     public TodoDbContext CreateDbContext()
     {
-        throw new NotImplementedException();
+        return _pooledFactory.CreateDbContext();
     }
     public async Task<TodoDbContext> CreateDbContextAsync() 
     {
