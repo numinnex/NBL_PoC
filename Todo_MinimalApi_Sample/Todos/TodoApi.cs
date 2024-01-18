@@ -2,11 +2,11 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Todo_MinimalApi_Sample.Endpoint;
-using Todo_MinimalApi_Sample.Persistance;
-using Todo_MinimalApi_Sample.Version;
+using NBL_PoC.Endpoint;
+using NBL_PoC.Persistance;
+using NBL_PoC.Version;
 
-namespace Todo_MinimalApi_Sample.Todos;
+namespace NBL_PoC.Todos;
 
 internal static class TodoApi
 {

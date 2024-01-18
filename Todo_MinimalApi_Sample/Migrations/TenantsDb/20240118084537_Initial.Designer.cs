@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Todo_MinimalApi_Sample.Migrations.TenantsDb
+namespace NBL_PoC.Migrations.TenantsDb
 {
     [DbContext(typeof(TenantsDbContext))]
     [Migration("20240118084537_Initial")]

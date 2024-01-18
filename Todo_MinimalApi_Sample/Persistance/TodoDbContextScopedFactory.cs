@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Todo_MinimalApi_Sample.Persistance;
+using NBL_PoC.Persistance;
 
 public class TodoDbContextScopedFactory : IDbContextFactory<TodoDbContext>
 {

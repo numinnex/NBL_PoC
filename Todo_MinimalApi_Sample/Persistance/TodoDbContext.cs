@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Todo_MinimalApi_Sample.Todos;
+using NBL_PoC.Todos;
 
-namespace Todo_MinimalApi_Sample.Persistance;
+namespace NBL_PoC.Persistance;
 
 public sealed class TodoDbContext : DbContext
 {

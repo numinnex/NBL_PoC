@@ -1,4 +1,4 @@
-namespace Todo_MinimalApi_Sample.Tenant
+namespace NBL_PoC.Tenant
 {
     public record TenantData : ITenant
     {

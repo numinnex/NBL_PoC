@@ -1,4 +1,4 @@
-namespace Todo_MinimalApi_Sample.Endpoint;
+namespace NBL_PoC.Endpoint;
 
 public static class EndpointBuilder
 {

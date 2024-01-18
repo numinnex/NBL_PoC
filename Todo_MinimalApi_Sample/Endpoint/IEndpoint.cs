@@ -1,6 +1,6 @@
 using Asp.Versioning;
 
-namespace Todo_MinimalApi_Sample.Endpoint;
+namespace NBL_PoC.Endpoint;
 
 public interface IEndpoint
 {

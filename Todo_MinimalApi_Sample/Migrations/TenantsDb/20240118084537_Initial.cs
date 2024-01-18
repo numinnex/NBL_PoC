@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Todo_MinimalApi_Sample.Migrations.TenantsDb
+namespace NBL_PoC.Migrations.TenantsDb
 {
     /// <inheritdoc />
     public partial class Initial : Migration

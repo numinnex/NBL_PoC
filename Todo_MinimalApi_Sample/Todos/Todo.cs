@@ -1,4 +1,4 @@
-namespace Todo_MinimalApi_Sample.Todos;
+namespace NBL_PoC.Todos;
 
 public sealed class Todo
 {

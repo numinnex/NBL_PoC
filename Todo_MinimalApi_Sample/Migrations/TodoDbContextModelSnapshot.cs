@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Todo_MinimalApi_Sample.Persistance;
+using NBL_PoC.Persistance;
 
 #nullable disable
 
-namespace Todo_MinimalApi_Sample.Migrations
+namespace NBL_PoC.Migrations
 {
     [DbContext(typeof(TodoDbContext))]
     partial class TodoDbContextModelSnapshot : ModelSnapshot

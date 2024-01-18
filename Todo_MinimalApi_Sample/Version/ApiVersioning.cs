@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using Asp.Versioning.Builder;
 
-namespace Todo_MinimalApi_Sample.Version;
+namespace NBL_PoC.Version;
 
 public static class ApiVersioning
 {
