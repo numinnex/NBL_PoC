@@ -1,0 +1,1 @@
+public record TenantDto(int Id, string Name);

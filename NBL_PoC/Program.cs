@@ -44,8 +44,11 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-	var dbContext = scope.ServiceProvider.GetService<TodoDbContext>();
+	var dbContext = scope.ServiceProvider.GetService<TenantsDbContext>();
 	await dbContext!.Database.MigrateAsync();
+	
+	var todosDbContext = scope.ServiceProvider.GetService<TodoDbContext>();
+	await todosDbContext!.Database.MigrateAsync();
 }
 
 

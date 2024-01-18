@@ -1,4 +1,3 @@
-using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NBL_PoC_Api.Persistance;
@@ -15,11 +14,21 @@ public class TodoController : ControllerBase
         _ctx = ctx;
     }
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get([FromQuery]int id, CancellationToken token)
+    public async Task<IActionResult> GetById([FromQuery]int id, CancellationToken token)
     {
         return await _ctx.Todos.FindAsync([id], token) switch
         {
             Todo todo => Ok(todo.AsTodoDto()),
+            _ => BadRequest()
+        };
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken token)
+    {
+        return await _ctx.Todos.Select(x => x.AsTodoDto()).ToListAsync(token) switch 
+        {
+            List<TodoDto> todos => Ok(todos),
             _ => BadRequest()
         };
     }
@@ -36,7 +45,7 @@ public class TodoController : ControllerBase
         await _ctx.Todos.AddAsync(todo, token);
         await _ctx.SaveChangesAsync(token);
 
-        return Created($"/Todo/{todo.Id}", todo.AsTodoDto());
+        return Created($"api/Todo/{todo.Id}", todo.AsTodoDto());
     }
 
     [HttpPut("{id}")]
