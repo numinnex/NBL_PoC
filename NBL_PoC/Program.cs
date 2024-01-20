@@ -36,19 +36,23 @@ builder.Services.AddApiVersioning(options =>
 	options.ApiVersionReader = new HeaderApiVersionReader("api-version");
 });
 
+builder.Services.AddScoped<IEncryptor, AesEncryptor>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<AesSettings>(builder.Configuration.GetSection("AES-Settings"));
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
 	var dbContext = scope.ServiceProvider.GetService<TenantsDbContext>();
+	var encryptor = scope.ServiceProvider.GetService<IEncryptor>();
 	await dbContext!.Database.MigrateAsync();
-	
-	var todosDbContext = scope.ServiceProvider.GetService<TodoDbContext>();
-	await todosDbContext!.Database.MigrateAsync();
+
+	await DbSeeder.SeedTenantsAsync(5, dbContext, encryptor!);
 }
 
 

@@ -4,10 +4,12 @@ using Microsoft.EntityFrameworkCore;
 public class TenantService : ITenantService
 {
     private readonly TenantsDbContext _ctx;
+    private readonly IEncryptor _encryptor;
 
-    public TenantService(TenantsDbContext ctx)
+    public TenantService(TenantsDbContext ctx, IEncryptor encryptor)
     {
         _ctx = ctx;
+        _encryptor = encryptor;
     }
     public async Task<string> GetConnectionStringAsync(int tenantId)
     {
@@ -15,14 +17,16 @@ public class TenantService : ITenantService
             .Where(x => x.Id == tenantId)
             .Select(x => x.ConnectionString)
             .SingleOrDefaultAsync();
-
-        return tenantConnectionString ?? string.Empty;
+        
+        return tenantConnectionString switch 
+        {
+            string connectionString => _encryptor.Decrypt(connectionString),
+            _ => string.Empty
+        };
     }
     public async Task CreateAsync(TenantDto dto, CancellationToken token) 
     {
-        //TODO(Grzegorz Koszyk) - Encrypt the connection string before storing it in database
-        //with AES-256 
-        var connectionString = TenantUtils.GenerateConnectionString(dto);
+        var connectionString = _encryptor.Encrypt(TenantUtils.GenerateConnectionString(dto));
         var tenant = new Tenant 
         {
             Id = dto.Id,
