@@ -1,9 +1,11 @@
+
+namespace NBL_PoC_Api.Tenants;
+
 public class Tenant 
 {
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public required string ConnectionString { get; set; }
-
+    public int Id { get; init; }
+    public required string Name { get; init; }
+    public required string ConnectionString { get; init; }
 }
 
 public static class TenantMappingExtensions

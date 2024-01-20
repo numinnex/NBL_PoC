@@ -1,4 +1,4 @@
-namespace NBL_PoC_Api.Tenant
+namespace NBL_PoC_Api.Tenants
 {
     public record TenantData : ITenant
     {

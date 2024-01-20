@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using NBL_PoC_Api.Persistance;
+using NBL_PoC_Api.Tenants;
+
+namespace NBL_PoC_Api.Persistance;
 
 public class TodoDbContextScopedFactory : IDbContextFactory<TodoDbContext>
 {

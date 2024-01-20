@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using NBL_PoC_Api.Persistance;
 using NBL_PoC_Api.Todos;
 
+namespace NBL_PoC_Api.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class TodoController : ControllerBase
@@ -13,8 +15,8 @@ public class TodoController : ControllerBase
     {
         _ctx = ctx;
     }
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById([FromQuery]int id, CancellationToken token)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById([FromRoute]int id, CancellationToken token)
     {
         return await _ctx.Todos.FindAsync([id], token) switch
         {
@@ -48,8 +50,8 @@ public class TodoController : ControllerBase
         return Created($"api/Todo/{todo.Id}", todo.AsTodoDto());
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromQuery]int id, TodoDto dto, CancellationToken token)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update([FromRoute]int id, TodoDto dto, CancellationToken token)
     {
         if (id != dto.Id)
         {
@@ -59,19 +61,17 @@ public class TodoController : ControllerBase
         var rowsAffected = await _ctx.Todos.Where(x => x.Id == id)
             .ExecuteUpdateAsync(updates =>
                 updates.SetProperty(t => t.Description, dto.Description)
-                       .SetProperty(t => t.Title, dto.Title)
-                       .SetProperty(t => t.IsCompleted, dto.IsCompleted), token);
+                    .SetProperty(t => t.Title, dto.Title)
+                    .SetProperty(t => t.IsCompleted, dto.IsCompleted), token);
 
-            return rowsAffected == 0 ? NotFound() : NoContent();
+        return rowsAffected == 0 ? NotFound() : NoContent();
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete(int id, CancellationToken token) 
     {
         var rowsAffected = await _ctx.Todos.Where(x => x.Id == id)
-                .ExecuteDeleteAsync(token);
+            .ExecuteDeleteAsync(token);
         return rowsAffected == 0 ? NotFound() : NoContent();
     }
-
 }
-

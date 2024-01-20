@@ -1,9 +1,14 @@
+using NBL_PoC_Api.Crypto;
+using NBL_PoC_Api.Tenants;
+
+namespace NBL_PoC_Api.Utils;
+
 public static class TenantUtils 
 {
     public static string GenerateConnectionString(TenantDto dto) 
     {
         var prefix = "Host=db;Database=";
-        // Thos two will be generated in future.
+        // Those two will be generated in future.
         var username = "super_admin";
         var password = "SomeSecretPassword;";
 

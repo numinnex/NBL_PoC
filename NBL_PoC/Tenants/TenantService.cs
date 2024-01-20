@@ -1,5 +1,9 @@
-
 using Microsoft.EntityFrameworkCore;
+using NBL_PoC_Api.Crypto;
+using NBL_PoC_Api.Persistance;
+using NBL_PoC_Api.Utils;
+
+namespace NBL_PoC_Api.Tenants;
 
 public class TenantService : ITenantService
 {
@@ -20,14 +24,14 @@ public class TenantService : ITenantService
         
         return tenantConnectionString switch 
         {
-            string connectionString => _encryptor.Decrypt(connectionString),
+            not null => _encryptor.Decrypt(tenantConnectionString),
             _ => string.Empty
         };
     }
     public async Task CreateAsync(TenantDto dto, CancellationToken token) 
     {
         var connectionString = _encryptor.Encrypt(TenantUtils.GenerateConnectionString(dto));
-        var tenant = new Tenant 
+        var tenant = new Tenants.Tenant 
         {
             Id = dto.Id,
             Name = dto.Name,
@@ -40,7 +44,7 @@ public class TenantService : ITenantService
     public async Task<bool> DeleteAsync(int id, CancellationToken token) 
     {
         var rowsAffected = await _ctx.Tenants.Where(x => x.Id == id)
-                .ExecuteDeleteAsync(token);
+            .ExecuteDeleteAsync(token);
         return rowsAffected > 0; 
     }
 

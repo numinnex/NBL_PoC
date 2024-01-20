@@ -1,3 +1,5 @@
+namespace NBL_PoC_Api.Tenants;
+
 public interface ITenantService 
 {
     public Task<string>  GetConnectionStringAsync(int tenantId);

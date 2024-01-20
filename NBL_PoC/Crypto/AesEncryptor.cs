@@ -1,6 +1,9 @@
-using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.Extensions.Options;
+using NBL_PoC_Api.Options.AES;
+
+namespace NBL_PoC_Api.Crypto;
 
 public class AesEncryptor : IEncryptor
 {
@@ -11,31 +14,44 @@ public class AesEncryptor : IEncryptor
     }
     public string Encrypt(string value) 
     {
-        using Aes aesAlg = Aes.Create();
-        aesAlg.Key = Encoding.UTF8.GetBytes(_aesSettings.Secret);
-        aesAlg.IV = Encoding.UTF8.GetBytes(_aesSettings.IV);
-
-        ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
-        using MemoryStream msEncrypt = new MemoryStream();
-        using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+        using var aesAlg = Aes.Create();
+    
+        var keyBytes = Encoding.UTF8.GetBytes(_aesSettings.Secret);
+        aesAlg.Key = keyBytes;
+    
+        aesAlg.GenerateIV();
+    
+        var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+        using var msEncrypt = new MemoryStream();
+        msEncrypt.Write(aesAlg.IV, 0, aesAlg.IV.Length);
+    
+        using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
         {
-            using StreamWriter swEncrypt = new StreamWriter(csEncrypt);
+            using var swEncrypt = new StreamWriter(csEncrypt);
             swEncrypt.Write(value);
         }
+    
         return Convert.ToBase64String(msEncrypt.ToArray());
     }
+
     public string Decrypt(string value)
     {
-        using Aes aesAlg = Aes.Create();
-        aesAlg.Key = Encoding.UTF8.GetBytes(_aesSettings.Secret);
-        aesAlg.IV = Encoding.UTF8.GetBytes(_aesSettings.IV);
+        using var aesAlg = Aes.Create();
+    
+        var keyBytes = Encoding.UTF8.GetBytes(_aesSettings.Secret);
+        aesAlg.Key = keyBytes;
+    
+        var iv = new byte[aesAlg.BlockSize / 8];
+        Array.Copy(Convert.FromBase64String(value), iv, iv.Length);
+        aesAlg.IV = iv;
 
-        ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+        var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-        using MemoryStream msDecrypt = new MemoryStream(Convert.FromBase64String(value));
-        using CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
-        using StreamReader srDecrypt = new StreamReader(csDecrypt);
+        using var msDecrypt = new MemoryStream(Convert.FromBase64String(value).Skip(iv.Length).ToArray());
+        using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
+        using var srDecrypt = new StreamReader(csDecrypt);
 
         return srDecrypt.ReadToEnd();
     }
+
 }

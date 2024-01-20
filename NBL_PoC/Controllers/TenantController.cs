@@ -1,5 +1,7 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using NBL_PoC_Api.Tenants;
+
+namespace NBL_PoC_Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -11,15 +13,15 @@ public class TenantController : ControllerBase
     {
         _tenantService = tenantService;
     }
-
+    
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken token) 
     {
         return Ok(await _tenantService.GetAll(token));
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id, CancellationToken token) 
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById([FromRoute]int id, CancellationToken token) 
     {
         return await _tenantService.GetById(id, token) switch 
         {
@@ -37,8 +39,8 @@ public class TenantController : ControllerBase
         return Created($"api/Tenant/{dto.Id}", dto);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete([FromQuery]int id, CancellationToken token) 
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute]int id, CancellationToken token) 
     {
         var result = await _tenantService.DeleteAsync(id, token);
         return result ? NoContent() : NotFound();

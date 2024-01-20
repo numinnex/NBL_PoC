@@ -1,8 +1,10 @@
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
-using NBL_PoC_Api.Tenant;
+using NBL_PoC_Api.Crypto;
+using NBL_PoC_Api.Options.AES;
 using NBL_PoC_Api.Persistance;
-using NBL_PoC_Api.Todos;
+using NBL_PoC_Api.Seeder;
+using NBL_PoC_Api.Tenants;
 using NBL_PoC_Api.Version;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,11 +50,23 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+	var tenantService = scope.ServiceProvider.GetService<ITenantService>();
+	var todoContext = scope.ServiceProvider.GetService<TodoDbContext>();
 	var dbContext = scope.ServiceProvider.GetService<TenantsDbContext>();
 	var encryptor = scope.ServiceProvider.GetService<IEncryptor>();
 	await dbContext!.Database.MigrateAsync();
 
 	await DbSeeder.SeedTenantsAsync(5, dbContext, encryptor!);
+	var tenantIds = await dbContext.Tenants.Select(x => x.Id).ToListAsync();
+	foreach (var tenantId in tenantIds)
+	{
+		Console.WriteLine("tenant id: {0}", tenantId);
+		var tenantCs = await tenantService!.GetConnectionStringAsync(tenantId);
+		Console.WriteLine("db cs {0}",dbContext.Database.GetConnectionString());
+		Console.WriteLine("tenant cs {0}", tenantCs);
+		todoContext!.Database.SetConnectionString(tenantCs);
+		await todoContext.Database.MigrateAsync();
+	}
 }
 
 
