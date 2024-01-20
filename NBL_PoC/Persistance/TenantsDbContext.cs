@@ -18,7 +18,6 @@ public class TenantsDbContext : DbContext
 		base.OnModelCreating(modelBuilder);
 	}
 }
-
 file sealed class TenantsTableConfiguration : IEntityTypeConfiguration<Tenant>
 {
 		public void Configure(EntityTypeBuilder<Tenant> builder)

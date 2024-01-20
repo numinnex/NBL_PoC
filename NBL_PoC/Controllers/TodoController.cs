@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NBL_PoC_Api.Persistance;
 using NBL_PoC_Api.Todos;
+using NBL_PoC_Api.Utils;
 
 namespace NBL_PoC_Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[RequireTenantIdHeader]
 public class TodoController : ControllerBase
 {
     private readonly TodoDbContext _ctx;
@@ -21,7 +23,7 @@ public class TodoController : ControllerBase
         return await _ctx.Todos.FindAsync([id], token) switch
         {
             Todo todo => Ok(todo.AsTodoDto()),
-            _ => BadRequest()
+            _ => NotFound()
         };
     }
 
@@ -72,6 +74,7 @@ public class TodoController : ControllerBase
     {
         var rowsAffected = await _ctx.Todos.Where(x => x.Id == id)
             .ExecuteDeleteAsync(token);
+        
         return rowsAffected == 0 ? NotFound() : NoContent();
     }
 }

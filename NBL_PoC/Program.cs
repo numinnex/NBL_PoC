@@ -5,6 +5,7 @@ using NBL_PoC_Api.Options.AES;
 using NBL_PoC_Api.Persistance;
 using NBL_PoC_Api.Seeder;
 using NBL_PoC_Api.Tenants;
+using NBL_PoC_Api.Utils;
 using NBL_PoC_Api.Version;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenant>(sp =>
 {
-    var tenantIdString = sp.GetRequiredService<IHttpContextAccessor>().HttpContext?.Request.Headers["TenantId"]; 
+    var tenantIdString = sp.GetRequiredService<IHttpContextAccessor>().HttpContext?.Request.Headers["X-TenantId"]; 
     return !string.IsNullOrEmpty(tenantIdString) && int.TryParse(tenantIdString, out var tenantId)
         ? new TenantData(tenantId)
         : null;
@@ -29,8 +30,9 @@ builder.Services.AddPooledDbContextFactory<TodoDbContext>(options =>
 	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<TodoDbContextScopedFactory>();
-builder.Services.AddScoped(sp 
-	=> sp.GetRequiredService<TodoDbContextScopedFactory>().CreateDbContext());
+builder.Services.AddScoped(
+	sp => sp.GetRequiredService<TodoDbContextScopedFactory>().CreateDbContext());
+
 builder.Services.AddApiVersioning(options =>
 {
 	options.DefaultApiVersion = ApiVersioning.V1;
@@ -42,7 +44,10 @@ builder.Services.AddScoped<IEncryptor, AesEncryptor>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(config =>
+{
+	config.OperationFilter<TenantHeaderFilter>();
+});
 
 builder.Services.Configure<AesSettings>(builder.Configuration.GetSection("AES-Settings"));
 
@@ -57,13 +62,10 @@ using (var scope = app.Services.CreateScope())
 	await dbContext!.Database.MigrateAsync();
 
 	await DbSeeder.SeedTenantsAsync(5, dbContext, encryptor!);
-	var tenantIds = await dbContext.Tenants.Select(x => x.Id).ToListAsync();
+	var tenantIds = await dbContext.Tenants.AsNoTracking().Select(x => x.Id).ToListAsync();
 	foreach (var tenantId in tenantIds)
 	{
-		Console.WriteLine("tenant id: {0}", tenantId);
 		var tenantCs = await tenantService!.GetConnectionStringAsync(tenantId);
-		Console.WriteLine("db cs {0}",dbContext.Database.GetConnectionString());
-		Console.WriteLine("tenant cs {0}", tenantCs);
 		todoContext!.Database.SetConnectionString(tenantCs);
 		await todoContext.Database.MigrateAsync();
 	}

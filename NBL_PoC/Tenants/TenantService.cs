@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NBL_PoC_Api.Crypto;
+using NBL_PoC_Api.Exceptions;
 using NBL_PoC_Api.Persistance;
 using NBL_PoC_Api.Utils;
 
@@ -9,11 +10,13 @@ public class TenantService : ITenantService
 {
     private readonly TenantsDbContext _ctx;
     private readonly IEncryptor _encryptor;
+    private readonly ITenant _tenant;
 
-    public TenantService(TenantsDbContext ctx, IEncryptor encryptor)
+    public TenantService(TenantsDbContext ctx, IEncryptor encryptor, ITenant tenant)
     {
         _ctx = ctx;
         _encryptor = encryptor;
+        _tenant = tenant;
     }
     public async Task<string> GetConnectionStringAsync(int tenantId)
     {
@@ -25,7 +28,7 @@ public class TenantService : ITenantService
         return tenantConnectionString switch 
         {
             not null => _encryptor.Decrypt(tenantConnectionString),
-            _ => string.Empty
+            _ => throw new InvalidTenantConnectionString()
         };
     }
     public async Task CreateAsync(TenantDto dto, CancellationToken token) 

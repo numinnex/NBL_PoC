@@ -6,21 +6,11 @@ namespace NBL_PoC_Api.Persistance;
 
 public sealed class TodoDbContext : DbContext
 {
-    public string ConnectionString { get; set; }
     public TodoDbContext(DbContextOptions<TodoDbContext> options) : base(options)
     {
-
     }
     public DbSet<Todo> Todos { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured && ConnectionString != string.Empty)
-        {
-            optionsBuilder.UseNpgsql(ConnectionString);
-        }
-        base.OnConfiguring(optionsBuilder);
-    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new TodoTableConfiguration());
