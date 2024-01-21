@@ -1,6 +1,6 @@
 namespace NBL_PoC_Api.Tenants
 {
-    public record TenantData : ITenant
+    public sealed record TenantData : ITenant
     {
         public TenantData(int tenantId)
             => TenantId = tenantId;

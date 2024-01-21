@@ -1,5 +1,7 @@
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
+using NBL_PoC_Api.Controllers;
 using NBL_PoC_Api.Crypto;
 using NBL_PoC_Api.Options.AES;
 using NBL_PoC_Api.Persistance;
@@ -22,12 +24,14 @@ builder.Services.AddScoped<ITenant>(sp =>
 builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddDbContext<TenantsDbContext>(options =>
 {
-	options.UseNpgsql(builder.Configuration.GetConnectionString("TenantsConnectionString"));
+	options.UseNpgsql(builder.Configuration.GetConnectionString("TenantsConnectionString"),
+		o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "tenants"));
 });
 
 builder.Services.AddPooledDbContextFactory<TodoDbContext>(options =>
 {
-	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+		o => o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "todos"));
 });
 builder.Services.AddScoped<TodoDbContextScopedFactory>();
 builder.Services.AddScoped(
@@ -37,7 +41,12 @@ builder.Services.AddApiVersioning(options =>
 {
 	options.DefaultApiVersion = ApiVersioning.V1;
 	options.AssumeDefaultVersionWhenUnspecified = true;
+	options.ReportApiVersions = true;
 	options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+	
+}).AddMvc(options =>
+{
+	options.Conventions.Controller<TodoController>().HasApiVersion(ApiVersioning.V1);
 });
 
 builder.Services.AddScoped<IEncryptor, AesEncryptor>();
@@ -60,6 +69,7 @@ using (var scope = app.Services.CreateScope())
 	var dbContext = scope.ServiceProvider.GetService<TenantsDbContext>();
 	var encryptor = scope.ServiceProvider.GetService<IEncryptor>();
 	await dbContext!.Database.MigrateAsync();
+	await todoContext!.Database.MigrateAsync();
 
 	await DbSeeder.SeedTenantsAsync(5, dbContext, encryptor!);
 	var tenantIds = await dbContext.Tenants.AsNoTracking().Select(x => x.Id).ToListAsync();

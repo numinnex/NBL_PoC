@@ -14,6 +14,7 @@ public sealed class TodoDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new TodoTableConfiguration());
+        modelBuilder.HasDefaultSchema("todos");
         base.OnModelCreating(modelBuilder);
     }
 }

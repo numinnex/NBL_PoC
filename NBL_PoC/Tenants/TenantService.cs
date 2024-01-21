@@ -6,7 +6,7 @@ using NBL_PoC_Api.Utils;
 
 namespace NBL_PoC_Api.Tenants;
 
-public class TenantService : ITenantService
+public sealed class TenantService : ITenantService
 {
     private readonly TenantsDbContext _ctx;
     private readonly IEncryptor _encryptor;

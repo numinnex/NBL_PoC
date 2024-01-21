@@ -15,6 +15,7 @@ public class TenantsDbContext : DbContext
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.ApplyConfiguration(new TenantsTableConfiguration());
+        modelBuilder.HasDefaultSchema("tenants");
 		base.OnModelCreating(modelBuilder);
 	}
 }

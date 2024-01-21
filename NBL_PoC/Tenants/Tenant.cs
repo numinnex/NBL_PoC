@@ -1,7 +1,7 @@
 
 namespace NBL_PoC_Api.Tenants;
 
-public class Tenant 
+public sealed class Tenant 
 {
     public int Id { get; init; }
     public required string Name { get; init; }

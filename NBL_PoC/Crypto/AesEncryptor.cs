@@ -5,7 +5,7 @@ using NBL_PoC_Api.Options.AES;
 
 namespace NBL_PoC_Api.Crypto;
 
-public class AesEncryptor : IEncryptor
+public sealed class AesEncryptor : IEncryptor
 {
     private readonly AesSettings _aesSettings;
     public AesEncryptor(IOptions<AesSettings> aesSettings)
