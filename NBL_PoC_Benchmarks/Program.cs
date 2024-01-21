@@ -2,6 +2,6 @@
 
 
 using BenchmarkDotNet.Running;
-using NBL_PoC_Benchamrsk;
+using NBL_PoC_DatabaseBenchmark;
 
-BenchmarkRunner.Run<DatabaseBenchmarks>();
+BenchmarkRunner.Run<DatabaseBenchmark>();

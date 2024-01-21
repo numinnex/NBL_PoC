@@ -6,10 +6,10 @@ using NBL_PoC_Api.Persistance;
 using NBL_PoC_Api.Seeder;
 using NBL_PoC_Api.Todos;
 
-namespace NBL_PoC_Benchamrsk;
+namespace NBL_PoC_DatabaseBenchmark;
 
 [MemoryDiagnoser]
-public class DatabaseBenchmarks
+public class DatabaseBenchmark
 {
     private TodoDbContext _ctx = null!;
     private IDbConnection _connection = null!;
@@ -30,7 +30,7 @@ public class DatabaseBenchmarks
         
         _random = new Random(420);
         _generator = new TodoGenerator(_ctx, _random);
-        await _generator.GenerateTodos(150);
+        await _generator.GenerateTodosAndSaveInDatabase(150);
     }
 
     [GlobalCleanup]
@@ -40,7 +40,7 @@ public class DatabaseBenchmarks
     }
     
     [Benchmark]
-    public async Task<Todo?> QuerySingleOrDefaultWithAsNotracking()
+    public async Task<Todo?> QuerySingleOrDefault()
     {
         return await _ctx.Todos.AsNoTracking().SingleOrDefaultAsync(x => x.Id == 69);
     }
@@ -72,7 +72,7 @@ public class DatabaseBenchmarks
     }
 
     [Benchmark]
-    public async Task<List<Todo>> QueryAllWithAsNoTracking()
+    public async Task<List<Todo>> QueryAll()
     {
         return await _ctx.Todos.AsNoTracking().ToListAsync();
     }
@@ -91,7 +91,7 @@ public class DatabaseBenchmarks
     }
 
     [Benchmark]
-    public async Task<Todo> QueryFilteredWithNoTracking()
+    public async Task<Todo> QueryFiltered()
     {
         return await _ctx.Todos
             .AsNoTracking()
@@ -104,13 +104,13 @@ public class DatabaseBenchmarks
             (TodoDbContext ctx, int id) => ctx.Todos.AsNoTracking()
                 .Where(x => x.IsCompleted).SingleOrDefault(x => x.Id == id));
     [Benchmark]
-    public async Task<Todo> QueryFilterCompiled()
+    public async Task<Todo> QueryFilteredCompiled()
     {
         return await QueryFilter(_ctx, 69);    
     }
 
     [Benchmark]
-    public async Task<Todo> QueryFilterRawSql()
+    public async Task<Todo> QueryFilteredRawSql()
     {
         return await _ctx.Database.SqlQueryRaw<Todo?>($"""SELECT * FROM "Todos" WHERE "IsCompleted" = true AND "Id" = {69}""")
             .AsNoTracking()
@@ -118,7 +118,7 @@ public class DatabaseBenchmarks
     }
 
     [Benchmark]
-    public async Task<Todo> QueryFilterDapper()
+    public async Task<Todo> QueryFilteredDapper()
     {
         var sql = $"""SELECT * FROM "Todos" WHERE "IsCompleted" = true AND "Id" = @Id""";
         return await _connection.QueryFirstOrDefaultAsync<Todo>(sql, new { Id = 69});

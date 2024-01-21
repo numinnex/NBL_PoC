@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NBL_PoC_Api.Migrations.Todo
 {
     [DbContext(typeof(TodoDbContext))]
-    [Migration("20240118161800_Initial")]
+    [Migration("20240121193919_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,6 +19,7 @@ namespace NBL_PoC_Api.Migrations.Todo
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("todos")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -47,7 +48,44 @@ namespace NBL_PoC_Api.Migrations.Todo
 
                     b.HasKey("Id");
 
-                    b.ToTable("Todos");
+                    b.ToTable("Todos", "todos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Test_desc_1",
+                            IsCompleted = true,
+                            Title = "Test_title_1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Test_desc_2",
+                            IsCompleted = false,
+                            Title = "Test_title_2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Test_desc_3",
+                            IsCompleted = true,
+                            Title = "Test_title_3"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Test_desc_4",
+                            IsCompleted = false,
+                            Title = "Test_title_4"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Test_desc_5",
+                            IsCompleted = false,
+                            Title = "Test_title_5"
+                        });
                 });
 #pragma warning restore 612, 618
         }

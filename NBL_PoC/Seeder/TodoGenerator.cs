@@ -1,4 +1,3 @@
-using System.Data;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using NBL_PoC_Api.Persistance;
@@ -22,14 +21,26 @@ public sealed class TodoGenerator
             .RuleFor(t => t.IsCompleted, f => f.Random.Bool());
     }
 
-    public async Task GenerateTodo()
+    public TodoGenerator()
+    {
+        _todoFaker = new Faker<Todo>()
+            .RuleFor(t => t.Title, f => f.Random.Words())
+            .RuleFor(t => t.Description, f => f.Lorem.Sentence())
+            .RuleFor(t => t.IsCompleted, f => f.Random.Bool());
+    }
+
+    public List<Todo> GenerateTodos(int count)
+    {
+        return _todoFaker.Generate(count);
+    }
+    public async Task GenerateTodoAndSaveInDatabase()
     {
         var data = _todoFaker.Generate();
         await _ctx.Todos.AddAsync(data);
         await _ctx.SaveChangesAsync();
     }
 
-    public async Task GenerateTodos(int count)
+    public async Task GenerateTodosAndSaveInDatabase(int count)
     {
         var data = _todoFaker.Generate(count).ToArray();
         await _ctx.Todos.AddRangeAsync(data);

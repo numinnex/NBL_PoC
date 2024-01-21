@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NBL_PoC_Api.Controllers;
 using NBL_PoC_Api.Crypto;
-using NBL_PoC_Api.Options.AES;
+using NBL_PoC_Api.Options;
 using NBL_PoC_Api.Persistance;
 using NBL_PoC_Api.Seeder;
 using NBL_PoC_Api.Tenants;
@@ -47,6 +47,7 @@ builder.Services.AddApiVersioning(options =>
 }).AddMvc(options =>
 {
 	options.Conventions.Controller<TodoController>().HasApiVersion(ApiVersioning.V1);
+	options.Conventions.Controller<TenantController>().HasApiVersion(ApiVersioning.V1);
 });
 
 builder.Services.AddScoped<IEncryptor, AesEncryptor>();

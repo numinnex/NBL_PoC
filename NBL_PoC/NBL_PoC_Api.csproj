@@ -27,4 +27,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Migrations\Tenant\" />
+      <Folder Include="Migrations\Todo\" />
+    </ItemGroup>
+
 </Project>

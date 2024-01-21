@@ -1,4 +1,4 @@
-namespace NBL_PoC_Api.Options.AES;
+namespace NBL_PoC_Api.Options;
 
 public sealed class AesSettings
 {

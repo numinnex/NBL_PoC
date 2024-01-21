@@ -16,12 +16,13 @@ namespace NBL_PoC_Api.Migrations.Tenant
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("tenants")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Tenant", b =>
+            modelBuilder.Entity("NBL_PoC_Api.Tenants.Tenant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +42,7 @@ namespace NBL_PoC_Api.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", "tenants");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
-using NBL_PoC_Api.Options.AES;
+using NBL_PoC_Api.Options;
 
 namespace NBL_PoC_Api.Crypto;
 

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NBL_PoC_Api.Migrations.Tenant
 {
     [DbContext(typeof(TenantsDbContext))]
-    [Migration("20240118161737_Initial")]
+    [Migration("20240121193238_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,12 +19,13 @@ namespace NBL_PoC_Api.Migrations.Tenant
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("tenants")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Tenant", b =>
+            modelBuilder.Entity("NBL_PoC_Api.Tenants.Tenant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,7 +45,7 @@ namespace NBL_PoC_Api.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", "tenants");
                 });
 #pragma warning restore 612, 618
         }

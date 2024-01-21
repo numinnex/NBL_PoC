@@ -11,8 +11,12 @@ namespace NBL_PoC_Api.Migrations.Tenant
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "tenants");
+
             migrationBuilder.CreateTable(
                 name: "Tenants",
+                schema: "tenants",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -30,7 +34,8 @@ namespace NBL_PoC_Api.Migrations.Tenant
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Tenants");
+                name: "Tenants",
+                schema: "tenants");
         }
     }
 }
