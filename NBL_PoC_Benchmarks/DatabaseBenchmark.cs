@@ -30,6 +30,7 @@ public class DatabaseBenchmark
         
         _random = new Random(420);
         _generator = new TodoGenerator(_ctx, _random);
+        await _generator.CleanupTodos();
         await _generator.GenerateTodosAndSaveInDatabase(150);
     }
 
@@ -59,7 +60,7 @@ public class DatabaseBenchmark
     public async Task<Todo?> QuerySingleOrDefaultRawSql()
     {
         var id = 69;
-        return await _ctx.Database.SqlQueryRaw<Todo?>("""SELECT * FROM "Todos" WHERE "Id" = {0}""", [id])
+        return await _ctx.Database.SqlQueryRaw<Todo?>("""SELECT * FROM todos."Todos" WHERE "Id" = {0}""", [id])
             .AsNoTracking()
             .SingleOrDefaultAsync();
     }
@@ -67,7 +68,7 @@ public class DatabaseBenchmark
     [Benchmark]
     public async Task<Todo?> QuerySingleOrDefaultDapper()
     {
-        var sql = $"""SELECT * FROM "Todos" WHERE "Id" = @Id""";
+        var sql = $"""SELECT * FROM todos."Todos" WHERE "Id" = @Id""";
         return await _connection.QuerySingleOrDefaultAsync<Todo>(sql, new { Id = 69});
     }
 
@@ -80,13 +81,13 @@ public class DatabaseBenchmark
     [Benchmark]
     public async Task<List<Todo>> QueryAllRawSql()
     {
-        return await _ctx.Database.SqlQueryRaw<Todo>("""SELECT * FROM "Todos" """).AsNoTracking().ToListAsync();
+        return await _ctx.Database.SqlQueryRaw<Todo>("""SELECT * FROM todos."Todos" """).AsNoTracking().ToListAsync();
     }
 
     [Benchmark]
     public async Task<List<Todo>> QueryAllDapper()
     {
-        var sql = $"""SELECT * FROM "Todos" """;
+        var sql = $"""SELECT * FROM todos."Todos" """;
         return (await _connection.QueryAsync<Todo>(sql)).ToList();
     }
 
@@ -112,7 +113,7 @@ public class DatabaseBenchmark
     [Benchmark]
     public async Task<Todo> QueryFilteredRawSql()
     {
-        return await _ctx.Database.SqlQueryRaw<Todo?>($"""SELECT * FROM "Todos" WHERE "IsCompleted" = true AND "Id" = {69}""")
+        return await _ctx.Database.SqlQueryRaw<Todo?>($"""SELECT * FROM todos."Todos" WHERE "IsCompleted" = true AND "Id" = {69}""")
             .AsNoTracking()
             .SingleOrDefaultAsync();
     }
@@ -120,7 +121,7 @@ public class DatabaseBenchmark
     [Benchmark]
     public async Task<Todo> QueryFilteredDapper()
     {
-        var sql = $"""SELECT * FROM "Todos" WHERE "IsCompleted" = true AND "Id" = @Id""";
+        var sql = $"""SELECT * FROM todos."Todos" WHERE "IsCompleted" = true AND "Id" = @Id""";
         return await _connection.QueryFirstOrDefaultAsync<Todo>(sql, new { Id = 69});
     }
 }
