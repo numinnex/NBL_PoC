@@ -28,15 +28,14 @@ public class TodoDbContextScopedFactory : IDbContextFactory<TodoDbContext>
     {
         // this retrieves the connection string from database, in the future caching those results is required
         // to avoid excessive database calls
-        var ctx = _pooledFactory.CreateDbContext();
-        if (_tenantId != DefaultTenantId)
+        if(_tenantId == DefaultTenantId) 
         {
-            var tenantCs = Task.Run(async () =>
-                await _tenantService.GetConnectionStringAsync(_tenantId)).Result;
-            ctx.Database.SetConnectionString(tenantCs);
-            return ctx;
+            throw new InvalidTenant();
         }
-
+        var ctx = _pooledFactory.CreateDbContext();
+        var tenantCs = Task.Run(async () =>
+            await _tenantService.GetConnectionStringAsync(_tenantId)).Result;
+        ctx.Database.SetConnectionString(tenantCs);
         return ctx;
     }
 }
